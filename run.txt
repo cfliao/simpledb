@@ -1,0 +1,11 @@
+build
+gradlew clean build
+
+start server:
+java -cp build/libs/simpledb-3.3.jar simpledb.server.Startup studentdb
+
+seed db:
+java -cp build/libs/simpledb-3.3.jar;build/classes/java/test  studentClient.simpledb.CreateStudentDB
+
+query records
+java -cp build/libs/simpledb-3.3.jar;build/classes/java/test  studentClient.simpledb.FindMajors math

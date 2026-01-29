@@ -1,7 +1,6 @@
 import java.sql.*;
 import javax.sql.rowset.*;
 import org.apache.derby.jdbc.ClientDriver;
-import com.sun.rowset.*;
 import java.io.*;
 
 public class WrsStudentsToXML {
@@ -26,7 +25,7 @@ public class WrsStudentsToXML {
 			ResultSet rs = stmt.executeQuery(qry);
 
 			Writer w = new FileWriter(OUTFILE);
-			WebRowSet wrs = new WebRowSetImpl();
+			WebRowSet wrs = RowSetProvider.newFactory().createWebRowSet();
 			wrs.populate(rs);
 			wrs.writeXml(w);
 			rs.close();
