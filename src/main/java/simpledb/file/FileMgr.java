@@ -136,6 +136,7 @@ public class FileMgr {
          RandomAccessFile f = new RandomAccessFile(dbTable, "rws");
          fc = f.getChannel();
          openFiles.put(filename, fc);
+         //f.close();
       }
       return fc;
    }
