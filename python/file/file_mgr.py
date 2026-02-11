@@ -75,7 +75,7 @@ class FileMgr:
             try:
                 fc = self._get_file(blk.file_name())
                 # Seek to the block position
-                offset = blk.number() * Page.BLOCK_SIZE
+                offset = blk.id() * Page.BLOCK_SIZE
                 os.lseek(fc, offset, os.SEEK_SET)
                 # Read the block
                 data = os.read(fc, Page.BLOCK_SIZE)
@@ -98,7 +98,7 @@ class FileMgr:
             try:
                 fc = self._get_file(blk.file_name())
                 # Seek to the block position
-                offset = blk.number() * Page.BLOCK_SIZE
+                offset = blk.id() * Page.BLOCK_SIZE
                 os.lseek(fc, offset, os.SEEK_SET)
                 # Write the block
                 os.write(fc, bytes(contents))

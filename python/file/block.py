@@ -12,16 +12,16 @@ class Block:
     Consists of a filename and a block number.
     """
 
-    def __init__(self, filename: str, blknum: int):
+    def __init__(self, file_name: str, id: int):
         """
         Constructs a block reference for the specified filename and block number.
 
         Args:
             filename: the name of the file
-            blknum: the block number
+            block_number: the block number
         """
-        self.filename = filename
-        self.blknum = blknum
+        self.file_name = file_name
+        self.id = id
 
     def file_name(self) -> str:
         """
@@ -30,16 +30,16 @@ class Block:
         Returns:
             the filename
         """
-        return self.filename
+        return self.file_name
 
-    def number(self) -> int:
+    def id(self) -> int:
         """
         Returns the location of the block within the file.
 
         Returns:
             the block number
         """
-        return self.blknum
+        return self.id
 
     def __eq__(self, obj) -> bool:
         """
@@ -53,7 +53,7 @@ class Block:
         """
         if not isinstance(obj, Block):
             return False
-        return self.filename == obj.filename and self.blknum == obj.blknum
+        return self.file_name == obj.file_name and self.id == obj.id
 
     def __str__(self) -> str:
         """
@@ -62,7 +62,7 @@ class Block:
         Returns:
             a string describing the block
         """
-        return f"[file {self.filename}, block {self.blknum}]"
+        return f"[file {self.file_name}, block {self.id}]"
 
     def __hash__(self) -> int:
         """
