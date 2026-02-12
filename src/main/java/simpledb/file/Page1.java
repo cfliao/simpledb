@@ -1,49 +1,13 @@
 package simpledb.file;
 
-import simpledb.server.SimpleDB;
-
-import java.io.File;
 import java.io.IOException;
 import java.io.RandomAccessFile;
 import java.nio.ByteBuffer;
 import java.nio.channels.FileChannel;
 import java.nio.charset.Charset;
 
-/**
- * The contents of a disk block in memory.
- * A page is treated as an array of BLOCK_SIZE bytes.
- * There are methods to get/set values into this array,
- * and to read/write the contents of this array to a disk block.
- * 
- * For an example of how to use Page and
- * {@link Block} objects,
- * consider the following code fragment.
- * The first portion **increments the integer** at offset 792 of block 6 of file
- * junk.
- * The second portion stores the string "hello" at offset 20 of a page,
- * and then appends it to a new block of the file.
- * It then reads that block into another page
- * and extracts the value "hello" into variable s.
- * 
- * <pre>
- * "this code make the value plus 1 which at 792"
- * Page p1 = new Page();
- * Block blk = new Block("junk", 6);
- * p1.read(blk);
- * int n = p1.getInt(792); // what does getInt do, what is 792
- * p1.setInt(792, n+1);
- * p1.write(blk);
- *
- * Page p2 = new Page();
- * p2.setString(20, "hello");
- * blk = p2.append("junk");
- * Page p3 = new Page();
- * p3.read(blk);
- * String s = p3.getString(20);
- * </pre>
- * 
- * @author Edward Sciore
- */
+import simpledb.server.SimpleDB;
+
 public class Page1 {
    /**
     * The number of bytes in a block.
@@ -95,13 +59,17 @@ public class Page1 {
    public Page1() {
    }
 
+   protected ByteBuffer getContents() {
+      return contents;
+   }
+
    /**
     * Populates the page with the contents of the specified disk block.
     * 
     * @param blk a reference to a disk block
     */
-   public synchronized void read(Block1 blk) {
-      try (RandomAccessFile file = new RandomAccessFile(blk.getFileName(), "rws")) {
+   public synchronized void loadFrom(Block1 blk) {
+      try (RandomAccessFile file = new RandomAccessFile(blk.getFileName(), "rw")) {
          FileChannel fc = file.getChannel();
          fc.read(contents, blk.getId() * BLOCK_SIZE);
       } catch (IOException e) {
@@ -135,10 +103,10 @@ public class Page1 {
     * 
     * @param blk a reference to a disk block
     */
-   public synchronized void write(Block1 block) {
+   public synchronized void writeTo(Block1 block) {
       // filemgr.write(blk, contents);
       contents.rewind();
-      try (RandomAccessFile file = new RandomAccessFile(block.getFileName(), "rws")) {
+      try (RandomAccessFile file = new RandomAccessFile(block.getFileName(), "rw")) {
          FileChannel fc = file.getChannel();
          fc.write(contents, block.getId() * BLOCK_SIZE);
       } catch (IOException e) {
@@ -207,54 +175,6 @@ public class Page1 {
       byte[] byteval = val.getBytes();
       contents.putInt(byteval.length);
       contents.put(byteval);
-   }
-
-   public static void main(String[] args) {
-      Page1 page = new Page1();
-      page.read(new Block1("C:/Users/Administrator/testdb/test1", 1));
-      System.out.println(page.contents);
-      dump(page.contents);
-   }
-
-   public static void dump(ByteBuffer buffer) {
-      // 複製一份以免影響原始 buffer 的 position
-      ByteBuffer temp = buffer.duplicate();
-      temp.flip(); // 如果你是要印出已經寫入的內容，記得先 flip
-
-      int count = 0;
-      StringBuilder hexSb = new StringBuilder();
-      StringBuilder asciiSb = new StringBuilder();
-
-      System.out.println("Offset    Hexadecimal              ASCII");
-      System.out.println("----------------------------------------");
-
-      while (temp.hasRemaining()) {
-         byte b = temp.get();
-
-         // 轉換為 2 位十六進位字串
-         hexSb.append(String.format("%02X ", b));
-
-         // 處理 ASCII 部分：僅顯示可列印字元 (32-126)，其餘顯示 '.'
-         if (b >= 32 && b <= 126) {
-            asciiSb.append((char) b);
-         } else {
-            asciiSb.append('.');
-         }
-
-         count++;
-
-         // 每 8 個位元組一排
-         if (count % 8 == 0) {
-            System.out.printf("%08X  %-24s | %s%n", count - 8, hexSb.toString(), asciiSb.toString());
-            hexSb.setLength(0);
-            asciiSb.setLength(0);
-         }
-      }
-
-      // 處理最後不滿 8 個位元組的情況
-      if (hexSb.length() > 0) {
-         System.out.printf("%08X  %-24s | %s%n", count - (count % 8), hexSb.toString(), asciiSb.toString());
-      }
    }
 
 }
