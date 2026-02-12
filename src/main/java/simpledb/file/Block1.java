@@ -8,20 +8,20 @@ package simpledb.file;
  * 
  * @author Edward Sciore
  */
-public class Block {
+public class Block1 {
    private String filename;
-   private int blknum;
+   private int id;
 
    /**
     * Constructs a block reference
     * for the specified filename and block number.
     * 
     * @param filename the name of the file
-    * @param blknum   the block number
+    * @param id       the block number
     */
-   public Block(String filename, int blknum) {
+   public Block1(String filename, int id) {
       this.filename = filename;
-      this.blknum = blknum;
+      this.id = id;
    }
 
    /**
@@ -29,7 +29,7 @@ public class Block {
     * 
     * @return the filename
     */
-   public String fileName() {
+   public String getFileName() {
       return filename;
    }
 
@@ -38,17 +38,19 @@ public class Block {
     * 
     * @return the block number
     */
-   public int number() {
-      return blknum;
+   public int getId() {
+      return id;
    }
 
    public boolean equals(Object obj) {
-      Block blk = (Block) obj;
-      return filename.equals(blk.filename) && blknum == blk.blknum;
+      if (!(obj instanceof Block1))
+         return false;
+      else
+         return filename.equals(((Block1) obj).getFileName()) && id == ((Block1) obj).getId();
    }
 
    public String toString() {
-      return "[file " + filename + ", block " + blknum + "]";
+      return "[file " + filename + ", block " + id + "]";
    }
 
    public int hashCode() {
